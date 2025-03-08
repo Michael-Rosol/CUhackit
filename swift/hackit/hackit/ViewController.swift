@@ -28,7 +28,7 @@ class ViewController: UIViewController, MFMessageComposeViewControllerDelegate, 
         manager.startAccelerometerUpdates()
 
         // Timer to update the label every second with accelerometer data
-        Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { [weak self] _ in
+        Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             if let data = self.manager.accelerometerData {
                 // Update the label text with accelerometer data
