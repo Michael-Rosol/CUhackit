@@ -2,9 +2,11 @@ import CoreMotion
 import UIKit
 import MessageUI
 
-class ViewController: UIViewController, MFMessageComposeViewControllerDelegate {
+class ViewController: UIViewController, MFMessageComposeViewControllerDelegate, URLSessionWebSocketDelegate {
 
     let manager = CMMotionManager()
+    var socket: URLSessionWebSocketTask?
+    
     
     // IBOutlet connected to your label in Interface Builder
     @IBOutlet var accelerometerLabel: UILabel!
@@ -17,6 +19,8 @@ class ViewController: UIViewController, MFMessageComposeViewControllerDelegate {
         
         // Customize the accelerometer label's appearance
         styleLabel()
+        connectSocket()
+        
         
         // Customize and add the send message button
         setupSendMessageButton()
@@ -31,6 +35,11 @@ class ViewController: UIViewController, MFMessageComposeViewControllerDelegate {
                 // Update the label text with accelerometer data
                 self.accelerometerLabel.text = String(format: "x: %.2f, y: %.2f, z: %.2f", data.acceleration.x, data.acceleration.y, data.acceleration.z)
             }
+        }
+        
+        Timer.scheduledTimer(withTimeInterval: 2, repeats: true){ _ in
+            self.sendtoServer()
+            
         }
     }
 
@@ -91,6 +100,37 @@ class ViewController: UIViewController, MFMessageComposeViewControllerDelegate {
         
         // Add the button to the main view
         self.view.addSubview(sendMessageButton)
+    }
+    
+    func connectSocket() {
+        let session = URLSession(configuration: .default, delegate: self, delegateQueue: .main)
+        socket = session.webSocketTask(with: URL(string: "ws://localhost:8080")!)
+        socket?.resume()
+    }
+    
+    func sendtoServer() {
+        let message = "Hello Jack"
+        socket?.send(.string(message)) { error in
+            if let error = error {
+                        print("Error sending data to WebSocket: \(error)")
+                self.connectSocket()
+                    } else {
+                        print("Successfully sent: \(message)")
+                    }
+        }
+        
+    }
+    
+    
+    func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
+        print("WebSocket connection established")
+    }
+
+    func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
+        print("WebSocket connection closed")
+        
+        // Reconnect if the connection closes
+        connectSocket()
     }
     
     @objc func sendMessage() {
