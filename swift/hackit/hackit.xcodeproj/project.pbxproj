@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		3511C9962D7C92E1009D574E /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = 3511C9952D7C92E1009D574E /* SocketIO */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		3511C96C2D7BEC07009D574E /* hackit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = hackit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3511C9962D7C92E1009D574E /* SocketIO in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +83,7 @@
 			);
 			name = hackit;
 			packageProductDependencies = (
+				3511C9952D7C92E1009D574E /* SocketIO */,
 			);
 			productName = hackit;
 			productReference = 3511C96C2D7BEC07009D574E /* hackit.app */;
@@ -107,6 +113,9 @@
 			);
 			mainGroup = 3511C9632D7BEC07009D574E;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				3511C9942D7C92E1009D574E /* XCRemoteSwiftPackageReference "socket" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 3511C96D2D7BEC07009D574E /* Products */;
 			projectDirPath = "";
@@ -337,6 +346,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		3511C9942D7C92E1009D574E /* XCRemoteSwiftPackageReference "socket" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/socketio/socket.io-client-swift";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3511C9952D7C92E1009D574E /* SocketIO */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3511C9942D7C92E1009D574E /* XCRemoteSwiftPackageReference "socket" */;
+			productName = SocketIO;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 3511C9642D7BEC07009D574E /* Project object */;
 }
