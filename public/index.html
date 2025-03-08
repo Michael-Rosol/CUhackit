@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -32,7 +32,89 @@
             console.log('WebSocket disconnected');
         };
 
-        
+        // Capture accelerometer data and pass it to gyro3.js
+        if (window.DeviceMotionEvent) {
+            window.addEventListener('devicemotion', (event) => {
+                const x = event.acceleration.x;
+                const y = event.acceleration.y;
+                const z = event.acceleration.z;
+
+                // Log accelerometer data
+                console.log(`Accelerometer Data: X: ${x}, Y: ${y}, Z: ${z}`);
+
+                // Send the data to the WebSocket server
+                const accelerometerData = `Accelerometer Data: X: ${x}, Y: ${y}, Z: ${z}`;
+                socket.send(accelerometerData);
+
+                // Pass the accelerometer data to gyro3.js
+                if (typeof updateAccelerometerData === 'function') {
+                    updateAccelerometerData(x, y, z); // Function in gyro3.js
+                }
+            });
+        } else {
+            console.log('Accelerometer not supported on this device');
+        }
+    </script>
+</body>
+</html>
+ -->
+
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Test</title>
+    <script type="text/javascript" src="../gyro3.js"></script>
+</head>
+<body>
+    <h1>WebSocket Test</h1>
+    <div id="messageContainer"></div>
+    
+    <!-- Display accelerometer data -->
+    <h2>Accelerometer Data</h2>
+    <p>X: <span id="xValue"></span></p>
+    <p>Y: <span id="yValue"></span></p>
+    <p>Z: <span id="zValue"></span></p>
+
+    <script>
+        const socket = new WebSocket('ws://localhost:8080');
+
+        socket.onopen = () => {
+            console.log('WebSocket connected');
+            socket.send('Hello from client');
+        };
+
+        socket.onmessage = (event) => {
+            console.log('Received message:', event.data);
+            
+            // If the data is accelerometer JSON, display it in individual fields
+            try {
+                const data = JSON.parse(event.data);
+                if (data.x !== undefined && data.y !== undefined && data.z !== undefined) {
+                    // Set the X, Y, and Z values in their respective spans
+                    document.getElementById('xValue').innerText = data.x.toFixed(2);
+                    document.getElementById('yValue').innerText = data.y.toFixed(2);
+                    document.getElementById('zValue').innerText = data.z.toFixed(2);
+                }
+            } catch (e) {
+                console.error('Error parsing received data:', e);
+                document.getElementById('messageContainer').innerText = event.data;
+            }
+            
+            // Show other messages in a general container
+           // const messageContainer = document.getElementById('messageContainer');
+            //messageContainer.innerText = event.data;
+        };
+
+        socket.onerror = (error) => {
+            console.error('WebSocket error:', error);
+        };
+
+        socket.onclose = () => {
+            console.log('WebSocket disconnected');
+            document.getElementById('messageContainer').innerText += "\nDisconnected from server";
+        };
     </script>
 </body>
 </html>

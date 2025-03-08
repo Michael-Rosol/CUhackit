@@ -28,7 +28,7 @@ class ViewController: UIViewController, MFMessageComposeViewControllerDelegate, 
         manager.startAccelerometerUpdates()
 
         // Timer to update the label every second with accelerometer data
-        Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+        Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             if let data = self.manager.accelerometerData {
                 // Update the label text with accelerometer data
@@ -150,31 +150,67 @@ class ViewController: UIViewController, MFMessageComposeViewControllerDelegate, 
         }
     }
     
+//    func sendToServer() {
+//        // Include accelerometer data in the message
+//        var message = "Hello Jack"
+//        
+//        if let data = self.manager.accelerometerData {
+//            message = String(format: "Accelerometer Data: x: %.2f, y: %.2f, z: %.2f",
+//                            data.acceleration.x,
+//                            data.acceleration.y,
+//                            data.acceleration.z)
+//        }
+//        
+//        socket?.send(.string(message)) { [weak self] error in
+//            guard let self = self else { return }
+//            
+//            if let error = error {
+//                print("Error sending data to WebSocket: \(error)")
+//                // Wait briefly before trying to reconnect
+//                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+//                    self.connectSocket()
+//                }
+//            } else {
+//                print("Successfully sent: \(message)")
+//            }
+//        }
+//    }
+    
     func sendToServer() {
-        // Include accelerometer data in the message
-        var message = "Hello Jack"
+        // Prepare accelerometer data in a dictionary format
+        var accelerometerData = [String: Any]()
         
         if let data = self.manager.accelerometerData {
-            message = String(format: "Accelerometer Data: x: %.2f, y: %.2f, z: %.2f",
-                            data.acceleration.x,
-                            data.acceleration.y,
-                            data.acceleration.z)
+            accelerometerData["x"] = data.acceleration.x
+            accelerometerData["y"] = data.acceleration.y
+            accelerometerData["z"] = data.acceleration.z
         }
-        
-        socket?.send(.string(message)) { [weak self] error in
-            guard let self = self else { return }
+
+        // Convert dictionary to JSON
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: accelerometerData, options: [])
             
-            if let error = error {
-                print("Error sending data to WebSocket: \(error)")
-                // Wait briefly before trying to reconnect
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    self.connectSocket()
+            // Convert JSON data to a string
+            if let jsonString = String(data: jsonData, encoding: .utf8) {
+                socket?.send(.string(jsonString)) { [weak self] error in
+                    guard let self = self else { return }
+                    
+                    if let error = error {
+                        print("Error sending data to WebSocket: \(error)")
+                        // Wait briefly before trying to reconnect
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            self.connectSocket()
+                        }
+                    } else {
+                        print("Successfully sent: \(jsonString)")
+                    }
                 }
-            } else {
-                print("Successfully sent: \(message)")
             }
+        } catch {
+            print("Error serializing accelerometer data to JSON: \(error)")
         }
     }
+
     
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
         print("WebSocket connection established")
