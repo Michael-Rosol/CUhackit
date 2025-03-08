@@ -3,72 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebSocket Data Display</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-        h1 {
-            text-align: center;
-            margin-top: 20px;
-            color: #333;
-        }
-        #data {
-            font-size: 20px;
-            margin-top: 30px;
-            text-align: center;
-            padding: 10px;
-            background-color: #222;
-            color: white;
-            border-radius: 5px;
-            width: 80%;
-            max-width: 400px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        #status {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 16px;
-            color: #555;
-        }
-    </style>
+    <title>WebSocket Test</title>
 </head>
 <body>
-    <h1>WebSocket Data from Swift App</h1>
-    <div id="data">Waiting for data...</div>
-    <div id="status">Connecting...</div>
+    <h1>WebSocket Test</h1>
+    <div id="messageContainer"></div>
 
     <script>
-        const socket = new WebSocket('wss://198.21.167.172:8080/'); // Change to your server's WebSocket URL
+        const socket = new WebSocket('ws://localhost:8080');
 
-        // When the WebSocket connection opens
-        socket.addEventListener('open', () => {
+        socket.onopen = () => {
             console.log('WebSocket connected');
-            document.getElementById('status').textContent = 'Connected';
-        });
+            socket.send('Hello from client');
+        };
 
-        // When the WebSocket receives a message
-        socket.addEventListener('message', (event) => {
-            console.log('Message from server:', event.data);
-            // Update the page with the received data
-            document.getElementById('data').innerText = `Received Data:\n${event.data}`;
-        });
+        socket.onmessage = (event) => {
+            console.log('Received message:', event.data);
+            const messageContainer = document.getElementById('messageContainer');
+            messageContainer.innerText = event.data;
+        };
 
-        // If the WebSocket connection closes
-        socket.addEventListener('close', () => {
-            console.log('WebSocket connection closed');
-            document.getElementById('status').textContent = 'Disconnected';
-        });
+        socket.onerror = (error) => {
+            console.error('WebSocket error:', error);
+        };
 
-        // If there's an error with the WebSocket
-        socket.addEventListener('error', (error) => {
-            console.log('WebSocket error:', error);
-            document.getElementById('status').textContent = 'Error occurred';
-        });
+        socket.onclose = () => {
+            console.log('WebSocket disconnected');
+        };
     </script>
 </body>
 </html>
