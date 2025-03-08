@@ -41,7 +41,7 @@
 
                 document.getElementById('data').innerHTML = `X: ${x}, Y: ${y}, Z: ${z}`;
 
-                fetch('198.21.167.172:5000', {  // Replace with your local IP
+                fetch('198.21.167.172', {  // Replace with your local IP
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ x, y, z })
