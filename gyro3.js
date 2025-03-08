@@ -9,7 +9,9 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 // Serve static files (like HTML, CSS, JS)
-app.use(express.static('public'));
+app.use(express.static("CUhackit"));
+
+
 
 // Handle WebSocket connections
 wss.on('connection', ws => {
