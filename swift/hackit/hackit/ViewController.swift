@@ -108,7 +108,7 @@ class ViewController: UIViewController, MFMessageComposeViewControllerDelegate, 
         let session = URLSession(configuration: .default, delegate: self, delegateQueue: .main)
         
         // Fixed WebSocket URL to use secure connection with proper port
-        guard let url = URL(string: "ws://198.21.167.172:8080/") else {
+        guard let url = URL(string: "ws://localhost:8080/") else {
             print("Invalid WebSocket URL")
             return
         }
